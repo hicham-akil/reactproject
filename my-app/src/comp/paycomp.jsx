@@ -1,0 +1,203 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+function PaymentPage() {
+    const [orderData, setOrderData] = useState(null); // State to hold order data
+    const [loading, setLoading] = useState(true); // Loading state
+    const [error, setError] = useState(null); // Error state
+    const navigate = useNavigate(); // For navigation
+
+    useEffect(() => {
+        const fetchOrderData = async () => {
+            try {
+                const userId = localStorage.getItem('user_id'); // Retrieve user_id from localStorage
+                if (!userId) {
+                    setError('User is not logged in');
+                    return;
+                }
+
+                const response = await fetch('http://localhost/BACKEND/order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId }), // Pass the userId to the backend
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.items && data.items.length > 0) {
+                        setOrderData(data);
+                    } else {
+                        setError('No items found in your cart');
+                    }
+                } else {
+                    setError('Failed to fetch order details from the server');
+                }
+            } catch (error) {
+                setError('An error occurred while fetching order details: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrderData();
+    }, []);
+
+    const handlePayment = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            alert('Payment successful! Thank you for your purchase.');
+            navigate('/'); // Redirect to home page
+        }, 2000); // Simulate payment processing
+    };
+
+    const deleteOrder = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const userId = localStorage.getItem('user_id'); // Get user_id from localStorage
+
+            if (!userId) {
+                setError('User ID is missing. Please log in.');
+                return;
+            }
+
+            const response = await fetch('http://localhost/BACKEND/deleteOrder.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }), // Pass userId to the backend
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message || 'Order deleted successfully');
+                    // Refresh order data
+                    setOrderData(null); // Clear the order data
+                } else {
+                    setError(data.message || 'Failed to delete the order.');
+                }
+            } else {
+                setError('Failed to connect to the delete order API.');
+            }
+        } catch (error) {
+            setError('Error deleting order: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return <div>Loading your order...</div>;
+    }
+
+    if (error) {
+        return <div className="text-red-500">{error}</div>;
+    }
+
+    return (
+        <div className="container mx-auto p-6 bg-gray-100 rounded shadow-lg">
+            <h1 className="text-2xl font-bold text-center mb-4">Payment Page</h1>
+
+            {orderData ? (
+                <div>
+                    <h2 className="text-lg font-bold mb-2">Order Summary</h2>
+                    <ul className="mb-4">
+                        {orderData.items.map((item, index) => (
+                            <li key={index} className="mb-2">
+                                <p>
+                                    <strong>Cart ID:</strong> {item.cart_id} <br />
+                                    <strong>Item ID:</strong> {item.item_id} <br />
+                                    <strong>Quantity:</strong> {item.quantity} <br />
+                                    <strong>Price:</strong> {item.price}€
+                                </p>
+                            </li>
+                        ))}
+                    </ul>
+                    <h3 className="text-xl font-bold">
+                        Total Price: {orderData.items.reduce((total, item) => total + item.price * item.quantity, 0)}€
+                    </h3>
+                </div>
+            ) : (
+                <p>No items found in your order.</p>
+            )}
+
+            {/* Delete Order Button */}
+            <div className="mt-4">
+                <button
+                    onClick={deleteOrder}
+                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                >
+                    Delete Order
+                </button>
+            </div>
+
+            {/* Payment Form */}
+            <div className="mt-6">
+                <h2 className="text-lg font-bold mb-2">Payment Details</h2>
+                <form className="space-y-4">
+                    <div>
+                        <label htmlFor="cardName" className="block font-medium">
+                            Name on Card
+                        </label>
+                        <input
+                            type="text"
+                            id="cardName"
+                            className="w-full p-2 border border-gray-300 rounded"
+                            placeholder="Enter your name"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="cardNumber" className="block font-medium">
+                            Card Number
+                        </label>
+                        <input
+                            type="text"
+                            id="cardNumber"
+                            className="w-full p-2 border border-gray-300 rounded"
+                            placeholder="XXXX-XXXX-XXXX-XXXX"
+                        />
+                    </div>
+                    <div className="flex space-x-4">
+                        <div>
+                            <label htmlFor="expiryDate" className="block font-medium">
+                                Expiry Date
+                            </label>
+                            <input
+                                type="text"
+                                id="expiryDate"
+                                className="w-full p-2 border border-gray-300 rounded"
+                                placeholder="MM/YY"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="cvv" className="block font-medium">
+                                CVV
+                            </label>
+                            <input
+                                type="text"
+                                id="cvv"
+                                className="w-full p-2 border border-gray-300 rounded"
+                                placeholder="123"
+                            />
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={handlePayment}
+                        className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+                    >
+                        Pay Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+export default PaymentPage;
