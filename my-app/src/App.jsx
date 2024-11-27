@@ -28,7 +28,7 @@ function App() {
             <>
               <Header />
               <Nav />
-              <Slider />
+              {/* <Slider /> */}
               <Data />
               <SignInForm />
               <SignUpForm />

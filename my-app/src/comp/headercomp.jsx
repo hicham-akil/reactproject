@@ -82,7 +82,7 @@ function Header() {
             <div className="flex">
                 <button 
                     onClick={fetchOrderData}
-                    className="bg-blue-100 text-white px-4 py-2 rounded-full hover:bg-blue-600 flex items-center text-sm"
+                    className="bg-blue-100 text-blue-300 px-4 py-2 rounded-full hover:bg-blue-600 flex items-center text-sm"
                 >
                     <i className="fas fa-shopping-cart"></i> 
                     Panier
@@ -123,20 +123,15 @@ function Header() {
                 </div>
             )}
 
-            {/* Logo and Search Section */}
-            <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between px-4 py-6 sm:py-4">
-                <div className="logobrand flex-shrink-0">
-                    <img src={logoimg} alt="Logo" className="w-32 h-auto sm:w-42" />
-                </div>
-                <div className="cherche mt-4 sm:mt-0 sm:text-left text-center w-full sm:w-auto">
+           
+                <div className="cherche mt-4 sm:mt-0 sm:text-left text-center w-full sm:w-auto relative">
                     <p className="text-2xl text-center sm:text-lg md:text-2xl">Cherchez le parapluie</p>
                     <input
                         type="text"
-                        className="mt-2 border border-gray-800 rounded p-2 w-full sm:w-auto max-w-xs"
+                        className="mt-2 border border-gray-800 rounded p-2 w-full sm:w-auto max-w-xs relative mt-5 mb-5 " style={{left:"45%"}}
                         placeholder="Entrez votre recherche"
                     />
-                </div>
-            </div>
+                 </div>
         </>
     );
 }

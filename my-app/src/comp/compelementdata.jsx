@@ -54,7 +54,7 @@ export default function Data() {
   }, [items.length]);
 
   return (
-    <div className="grid grid-cols-4 grid-row-2 gap-4 mt-5 h-screen p-4 mainone">
+    <div className="grid grid-cols-4 grid-row-2 gap-4 mt-5 h-screen p-4 mainone relative" style={{top:"200px"}}>
       {items.map((item, index) => (
         <div
           key={item.id}
