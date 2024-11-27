@@ -1,15 +1,15 @@
-/* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-body {
-    background-image: url('img/bg.jpg');
- 
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    height: 80vh;
-    margin-top: 0;
-    padding: 0;
-  }
+  /* src/index.css */
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  body {
+      background-image: url('src/img/bg.jpg');
+  
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      height: 80vh;
+      margin-top: 0;
+      padding: 0;
+    }
   
