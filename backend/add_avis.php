@@ -1,48 +1,78 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Set headers to handle JSON and CORS
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Origin: http://localhost:5173'); // Adjust this to your frontend's origin
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "parapluitdatabase";
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
-try {
-    // Create PDO connection
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Read the JSON input
+$data = json_decode(file_get_contents('php://input'));
 
-    // Read input JSON from request body
-    $data = json_decode(file_get_contents("php://input"), true);
+// Check if required fields are provided
+if (isset($data->user_id, $data->rating, $data->comment)) {
+    $user_id = (int)$data->user_id;
+    $rating = (int)$data->rating;
+    $comment = $data->comment;
 
-    // Validate input
-    if (isset($data['user_id'], $data['rating'], $data['comment']) && 
-        is_numeric($data['user_id']) && 
-        is_numeric($data['rating']) && 
-        $data['rating'] >= 1 && $data['rating'] <= 5 &&
-        !empty($data['comment'])) {
-        
-        $user_id = intval($data['user_id']);
-        $rating = intval($data['rating']);
-        $comment = trim($data['comment']);
+    // Database connection settings
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $database = "parapluitdatabase";
 
-        // Insert data into the database
-        $query = $pdo->prepare("INSERT INTO avis (user_id, rating, comment) VALUES (:user_id, :rating, :comment)");
-        $query->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $query->bindParam(':rating', $rating, PDO::PARAM_INT);
-        $query->bindParam(':comment', $comment, PDO::PARAM_STR);
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $database);
 
-        if ($query->execute()) {
-            echo json_encode(["success" => true, "message" => "Avis added successfully"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Failed to add avis"]);
-        }
-    } else {
-        echo json_encode(["success" => false, "message" => "Invalid input"]);
+    // Check connection
+    if ($conn->connect_error) {
+        echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
+        exit;
     }
-} catch (PDOException $e) {
-    echo json_encode(["success" => false, "message" => "Database error: " . $e->getMessage()]);
+
+    // Check if the user already has a review
+    $checkQuery = "SELECT id FROM avis WHERE user_id = ?";
+    $stmt = $conn->prepare($checkQuery);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Update the existing review
+        $updateQuery = "UPDATE avis SET rating = ?, comment = ? WHERE user_id = ?";
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->bind_param("isi", $rating, $comment, $user_id);
+        if ($updateStmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Review updated successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update the review.']);
+        }
+        $updateStmt->close();
+    } else {
+        // Insert a new review
+        $insertQuery = "INSERT INTO avis (user_id, rating, comment) VALUES (?, ?, ?)";
+        $insertStmt = $conn->prepare($insertQuery);
+        $insertStmt->bind_param("iis", $user_id, $rating, $comment);
+        if ($insertStmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Review added successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to add the review.']);
+        }
+        $insertStmt->close();
+    }
+
+    $stmt->close();
+    $conn->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Required data not provided']);
 }
 ?>

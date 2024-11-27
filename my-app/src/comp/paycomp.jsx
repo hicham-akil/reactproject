@@ -44,49 +44,54 @@ function PaymentPage() {
         fetchOrderData();
     }, []);
 
-    const handlePayment = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            alert('Payment successful! Thank you for your purchase.');
-            navigate('/'); // Redirect to home page
-        }, 2000); // Simulate payment processing
-    };
-
-    const deleteOrder = async () => {
+    const handlePayment = async () => {
         setLoading(true);
         setError(null);
-
+    
         try {
-            const userId = localStorage.getItem('user_id'); // Get user_id from localStorage
-
-            if (!userId) {
-                setError('User ID is missing. Please log in.');
+            const userId = localStorage.getItem('user_id');
+            if (!userId || !orderData) {
+                setError('User is not logged in or order data is missing.');
                 return;
             }
+    
+            // Simulate payment details (replace with real user inputs)
+            const paymentDetails = {
+                userId,
+                cardName: document.getElementById('cardName').value,
+                cardNumber: document.getElementById('cardNumber').value,
+                expiryDate: document.getElementById('expiryDate').value,
+                cvv: document.getElementById('cvv').value,
+                totalAmount: orderData.items.reduce((total, item) => total + item.price * item.quantity, 0),
+                orderItems: orderData.items, // Send order items
+            };
 
-            const response = await fetch('http://localhost/BACKEND/deleteOrder.php', {
+            // Log the payment details to debug missing data
+            console.log('Payment Details:', paymentDetails);
+
+            // Send payment details to the backend
+            const response = await fetch('http://localhost/BACKEND/payment.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId }), // Pass userId to the backend
+                body: JSON.stringify(paymentDetails),
             });
-
+    
             if (response.ok) {
                 const data = await response.json();
                 if (data.success) {
-                    alert(data.message || 'Order deleted successfully');
-                    // Refresh order data
+                    alert(data.message || 'Payment successful! Thank you for your purchase.');
                     setOrderData(null); // Clear the order data
+                    navigate('/'); // Redirect to home page
                 } else {
-                    setError(data.message || 'Failed to delete the order.');
+                    setError(data.message || 'Payment failed.');
                 }
             } else {
-                setError('Failed to connect to the delete order API.');
+                setError('Failed to connect to the payment API.');
             }
         } catch (error) {
-            setError('Error deleting order: ' + error.message);
+            setError('An error occurred during payment: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -126,16 +131,6 @@ function PaymentPage() {
             ) : (
                 <p>No items found in your order.</p>
             )}
-
-            {/* Delete Order Button */}
-            <div className="mt-4">
-                <button
-                    onClick={deleteOrder}
-                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
-                >
-                    Delete Order
-                </button>
-            </div>
 
             {/* Payment Form */}
             <div className="mt-6">

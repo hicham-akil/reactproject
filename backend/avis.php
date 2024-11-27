@@ -1,39 +1,68 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Allow requests from any origin (adjust for security in production)
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Database credentials
+// Set headers to handle JSON and CORS
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: http://localhost:5173'); // Adjust this to your frontend's origin
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Database connection settings
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "parapluitdatabase";
+$database = "parapluitdatabase";
 
-try {
-    // Create PDO connection
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Create connection
+$conn = new mysqli($servername, $username, $password, $database);
 
-    // Prepare and execute the SQL query
-    $query = $pdo->prepare("
-        SELECT 
-            avis.id, 
-            avis.rating, 
-            avis.comment, 
-            CONCAT(users.firstName, ' ', users.lastName) AS author_name 
-        FROM avis 
-        JOIN users ON avis.user_id = users.id
-    ");
-    $query->execute();
-
-    // Fetch results as an associative array
-    $avis = $query->fetchAll(PDO::FETCH_ASSOC);
-
-    // Return results as JSON
-    echo json_encode($avis);
-
-} catch (PDOException $e) {
-    // Return JSON error message if any exception occurs
-    echo json_encode(['error' => "Database query failed: " . $e->getMessage()]);
-    exit();
+// Check connection
+if ($conn->connect_error) {
+    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
+    exit;
 }
+
+// Check if user_id is provided
+if (isset($_GET['user_id'])) {
+    $user_id = (int)$_GET['user_id'];
+
+    // Query to fetch all reviews and the current user's review
+    $allReviewsQuery = "SELECT avis.id, avis.user_id, avis.rating, avis.comment, users.name AS author_name 
+                        FROM avis 
+                        LEFT JOIN users ON avis.user_id = users.id";
+    $userReviewQuery = "SELECT * FROM avis WHERE user_id = ?";
+
+    // Fetch all reviews
+    $allReviews = [];
+    $result = $conn->query($allReviewsQuery);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $allReviews[] = $row;
+        }
+    }
+
+    // Fetch the logged-in user's review
+    $userReview = null;
+    if ($stmt = $conn->prepare($userReviewQuery)) {
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $userReview = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+    }
+
+    // Respond with all reviews and the user's review
+    echo json_encode(['success' => true, 'allReviews' => $allReviews, 'userReview' => $userReview]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'User ID not provided']);
+}
+
+$conn->close();
 ?>

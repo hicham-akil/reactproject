@@ -1,0 +1,20 @@
+stdClass Object
+(
+    [userId] => 4
+    [cardName] => name
+    [cardNumber] => 1234567812345678
+    [expiryDate] => 12/3
+    [cvv] => 123
+    [totalAmount] => 10
+    [orderItems] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [item_id] => 1
+                    [quantity] => 1
+                    [price] => 10.00
+                )
+
+        )
+
+)
