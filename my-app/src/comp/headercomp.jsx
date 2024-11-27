@@ -124,7 +124,7 @@ function Header() {
             )}
 
            
-                <div className="cherche mt-4 sm:mt-0 sm:text-left text-center w-full sm:w-auto relative">
+                <div className="cherche mt-4 sm:mt-0 sm:text-left text-center w-full sm:w-auto relative" style={{top:"200px"}}>
                     <p className="text-2xl text-center sm:text-lg md:text-2xl">Cherchez le parapluie</p>
                     <input
                         type="text"

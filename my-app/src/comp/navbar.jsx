@@ -8,7 +8,7 @@ function Nav() {
   return (
     <>
       {/* Navigation bar */}
-      <nav className="bg-black text-white py-4 relative " style={{top:"200px"}}>
+      <nav className="bg-black text-white py-4 relative " style={{top:"600px"}}>
       {/* <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between px-4 py-6 sm:py-4 relative " style={{left:"0%"}}>
                 <div className="logobrand flex-shrink-0">
                     <img src={logoimg} alt="Logo" className="w-10 h-15 rounded-3xl sm:w-42" />

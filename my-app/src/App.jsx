@@ -30,8 +30,8 @@ function App() {
               <Nav />
               {/* <Slider /> */}
               <Data />
-              <SignInForm />
-              <SignUpForm />
+              {/* <SignInForm />
+              <SignUpForm /> */}
               <Sem />
               <Avis />
               <Footer />
