@@ -3,59 +3,60 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Allow requests from any origin
+// Allow requests from any origin (CORS settings)
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Database connection
+// Database connection settings
 $servername = "localhost";
 $username = "root"; // Your DB username
 $password = ""; // Your DB password
 $dbname = "parapluitdatabase"; // Your DB name
 
-// Create connection
+// Create database connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
+// Check for database connection errors
 if ($conn->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
 }
 
 // Handle preflight requests (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit; // Terminate the script for preflight requests
+    exit; // Exit for preflight requests
 }
 
-// Get the posted JSON data
+// Get the posted JSON data (email and password)
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Check if email and password are set
+// Check if email and password are provided
 if (isset($data['email']) && isset($data['password'])) {
     $email = $data['email'];
     $password = $data['password'];
 
-    // Sanitize input email (Optional but recommended)
+    // Sanitize the email input
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
-    // Query to fetch user data based on email
+    // Prepare SQL query to check if the user exists
     $sql = "SELECT id, password, firstName, lastName, phone, shippingAddress FROM users WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Check if the user exists
     if ($result->num_rows > 0) {
-        // User found, verify password
         $user = $result->fetch_assoc();
-        
-        // Verify password
+
+        // Verify the password
         if (password_verify($password, $user['password'])) {
             // Password is correct, return user details
             echo json_encode([
                 "success" => true,
-                "user_id" => $user['id'],  // Correct the field to 'id'
+                "user_id" => $user['id'],
+                "username" => $user['firstName'] . ' ' . $user['lastName'], // Concatenate firstName and lastName
                 "firstName" => $user['firstName'],
                 "lastName" => $user['lastName'],
                 "phone" => $user['phone'],
@@ -73,6 +74,6 @@ if (isset($data['email']) && isset($data['password'])) {
     echo json_encode(["error" => "Email and password are required."]);
 }
 
-// Close the connection
+// Close the database connection
 $conn->close();
 ?>

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom"; 
+
 
 export default function SignUpForm() {
   const [firstName, setFirstName] = useState("");
@@ -144,6 +146,14 @@ export default function SignUpForm() {
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            you have acount
+            <Link to="/login" className="text-blue-500 hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

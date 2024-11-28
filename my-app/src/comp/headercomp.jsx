@@ -1,139 +1,46 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import logoimg from '../img/logo.jpg'; // Importing the image
+import pic from '../img/girl.jpg';
 
 function Header() {
-    const [showOrder, setShowOrder] = useState(false); // State to toggle visibility of the order info
-    const [orderData, setOrderData] = useState(null);
-    const [loading, setLoading] = useState(false); // State to manage loading state
-    const [error, setError] = useState(null); // State to manage error messages
+  return (
+    <>
+      {/* Info Section */}
+      <div className="info flex flex-wrap justify-center sm:justify-end items-center space-x-4 sm:space-x-2 py-4 px-4 overflow-x-hidden text-gray-800">
+        <span className="text-xs sm:text-sm flex items-center">
+          <i className="fas fa-shipping-fast mr-1"></i> Livraison 48h
+        </span>
+        <span className="text-xs sm:text-sm flex items-center">
+          <i className="fas fa-box mr-1"></i> Colissimo
+        </span>
+        <span className="text-xs sm:text-sm flex items-center">
+          <i className="fas fa-store mr-1"></i> Relais
+        </span>
+        <a href="#" className="flex items-center text-xs sm:text-sm hover:underline">
+          <i className="fas fa-comment-dots mr-1"></i> Contact
+        </a>
+        <a href="tel:0980803535" className="flex items-center text-xs sm:text-sm hover:underline">
+          <i className="fas fa-phone-alt mr-1"></i> 09 80 80 35 35
+        </a>
+      </div>
 
-    const navigate = useNavigate(); // Hook for navigation
-
-    // Function to fetch order data
-    const fetchOrderData = async () => {
-        if (!showOrder) {
-            setLoading(true);
-            setError(null);
-            try {
-                const userId = localStorage.getItem('user_id'); // Get userId from localStorage
-                if (!userId) {
-                    setError('User is not logged in');
-                    return;
-                }
-
-                // Send the userId to the backend via POST request
-                const response = await fetch('http://localhost/BACKEND/order.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ userId }), // Send userId in the body
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setOrderData(data); // Set the order data received from backend
-                    setShowOrder(true); // Show the order data
-                } else {
-                    setError('Failed to fetch order data');
-                }
-            } catch (error) {
-                setError('Error fetching order data: ' + error.message);
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            setShowOrder(false);
-        }
-    };
-
-    // Function to navigate to the payment page
-    const handlePayment = () => {
-        navigate('/payment'); // Navigate to the "/payment" route
-    };
-
-    return (
-        <>
-            {/* Top section with background */}
-            <div className="bg-blue-300 w-full p-4">
-                <p className="text-center text-base sm:text-lg md:text-xl">
-                    Parapluie homme, parapluie femme & parapluie enfant : boutique en ligne N°1 des parapluies pour tous en France !
-                </p>
-            </div>
-
-            {/* Information section aligned to the right */}
-            <div className="info flex justify-end items-center space-x-4 sm:space-x-2 py-4 px-4 overflow-x-hidden">
-                <span className="text-xs sm:text-sm">Livraison 48h</span>
-                <i className="fas fa-shipping-fast"></i>
-                <span className="text-xs sm:text-sm">Colissimo</span>
-                <i className="fas fa-box"></i>
-                <span className="text-xs sm:text-sm">Relais</span>
-                <i className="fas fa-store"></i>
-                <a href="#" className="flex items-center text-xs sm:text-sm">
-                    <i className="fas fa-comment-dots"></i> Contact
-                </a>
-                <a href="tel:0980803535" className="flex items-center text-xs sm:text-sm">
-                    <i className="fas fa-phone-alt"></i> 09 80 80 35 35
-                </a>
-            </div>
-
-            {/* Panier Button */}
-            <div className="flex">
-                <button 
-                    onClick={fetchOrderData}
-                    className="bg-blue-100 text-blue-300 px-4 py-2 rounded-full hover:bg-blue-600 flex items-center text-sm"
-                >
-                    <i className="fas fa-shopping-cart"></i> 
-                    Panier
-                </button>
-            </div>
-
-            {/* Conditional Order Data Display */}
-            {loading && <div>Loading order data...</div>} {/* Show loading text when fetching */}
-            {error && <div className="text-red-500">{error}</div>} {/* Show error message */}
-            {showOrder && (
-                <div className="order-info bg-gray-100 p-4 mt-4 rounded shadow-lg">
-                    <h2 className="text-lg font-bold">Votre Commande</h2>
-                    {orderData ? (
-                        <ul>
-                            {orderData.items && orderData.items.length > 0 ? (
-                                orderData.items.map((item, index) => (
-                                    <li key={index} className="mt-2">
-                                        <p>
-                                            Cart ID: {item.cart_id} - Item ID: {item.item_id} - Quantity: {item.quantity} - Price: {item.price}€
-                                        </p>
-                                    </li>
-                                ))
-                            ) : (
-                                <p>Aucun article dans la commande.</p>
-                            )}
-                        </ul>
-                    ) : (
-                        <p>Chargement de la commande...</p>
-                    )}
-
-                    {/* Payer Button */}
-                    <button
-                        onClick={handlePayment}
-                        className="mt-4 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
-                    >
-                        Payer
-                    </button>
-                </div>
-            )}
-
-           
-                <div className="cherche mt-4 sm:mt-0 sm:text-left text-center w-full sm:w-auto relative" style={{top:"200px"}}>
-                    <p className="text-2xl text-center sm:text-lg md:text-2xl">Cherchez le parapluie</p>
-                    <input
-                        type="text"
-                        className="mt-2 border border-gray-800 rounded p-2 w-full sm:w-auto max-w-xs relative mt-5 mb-5 " style={{left:"45%"}}
-                        placeholder="Entrez votre recherche"
-                    />
-                 </div>
-        </>
-    );
+      {/* Search Section with Image Below */}
+      <div className="cherche flex flex-col items-center mt-6">
+        <p className="text-2xl sm:text-xl md:text-2xl font-bold text-gray-900 mb-4">Cherchez le parapluie</p>
+        <input
+          type="text"
+          className="border border-gray-400 rounded-lg p-3 w-64 sm:w-72 md:w-96 text-center"
+          placeholder="Entrez votre recherche"
+        />
+        <div className="mt-6 relative right-1/4">
+          <img
+            src={pic}
+            alt="Girl with umbrella"
+            className="w-70 sm:w-96 md:w-[400px] lg:w-[500px] rounded-lg shadow-lg transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out border-4"
+            />
+     
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Header;
