@@ -12,8 +12,9 @@ export default function Data() {
       .catch((error) => console.error("Error fetching items:", error));
   }, []);
 
-  const handleAddToCartClick = (itemId, itemPrice) => {
-    navigate(`/item/${itemId}/price/${itemPrice}`);
+  const handleAddToCartClick = (itemId, itemPrice, itemImage) => {
+    // Pass the image URL, itemId, and itemPrice in the URL parameters
+    navigate(`/item/${itemId}/price/${itemPrice}/image/${encodeURIComponent(itemImage)}`);
   };
 
   return (
@@ -24,7 +25,8 @@ export default function Data() {
             key={item.id}
             className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-between"
           >
-            <img style={{width:"150px"}}
+            <img
+              style={{ width: "150px" }}
               src={item.src}
               alt={`Image for ${item.p}`}
               className="w-full h-32 object-cover rounded mb-3"
@@ -37,7 +39,7 @@ export default function Data() {
             </p>
             <button
               className="bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              onClick={() => handleAddToCartClick(item.id, item.price)}
+              onClick={() => handleAddToCartClick(item.id, item.price, item.src)} // Pass the image URL
             >
               Ajouter au panier
             </button>

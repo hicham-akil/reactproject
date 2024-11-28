@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import oif from '../img/OIF.jpg'; 
-import thumbnail1 from '../img/th.jpg'; 
-import thumbnail2 from '../img/th7.jpg';
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 function Achter() {
-  const { Id, price } = useParams(); // Extract 'Id' and 'price' from the URL
-  const [currentImage, setCurrentImage] = useState(oif); // Set default image
+  const { Id, price, image } = useParams(); // Extract 'Id', 'price', and 'image' from the URL
+  const [currentImage, setCurrentImage] = useState(decodeURIComponent(image) || 'default-image.jpg'); // Decode the URL component
   const [quantity, setQuantity] = useState(1); // Default quantity is 1
   const [userId, setUserId] = useState(null); // For storing userId (from localStorage)
   const [itemData, setItemData] = useState({ name: 'Loading...', price: '...' }); // Item data
@@ -27,10 +24,8 @@ function Achter() {
     const storedUserId = localStorage.getItem('user_id'); // Fetch from localStorage
     if (storedUserId) {
       setUserId(storedUserId); // Set userId if it exists
-      console.log("User ID from localStorage:", storedUserId); // Debugging log
     } else {
       setError('Please log in to add items to your cart');
-      console.log("No user ID found in localStorage."); // Debugging log
     }
   }, []);
 
@@ -43,27 +38,20 @@ function Achter() {
     }
   }, [Id, price]);
 
-  // Handle thumbnail clicks to change the main image
-  const handleThumbnailClick = (image) => {
-    setCurrentImage(image);
-  };
-
   const addToCart = async () => {
-    console.log("User ID at addToCart:", userId); // Debugging log for userId in addToCart function
     if (!userId) {
       setError('Please log in to add items to your cart');
       return;
     }
-  
+
     if (!Id || !quantity || quantity < 1) {
       setError('Please select a valid item and quantity.');
       return;
     }
-  
+
     setLoading(true);
-    const dataToSend = { userId, Id, quantity, price }; // Prepare the data to send
-    console.log('Data to send:', dataToSend); // Debugging log
-  
+    const dataToSend = { userId, Id, quantity, price };
+
     try {
       const response = await fetch('http://localhost/backend/add_to_cart.php', {
         method: 'POST',
@@ -73,16 +61,15 @@ function Achter() {
         },
         body: JSON.stringify(dataToSend),
       });
-  
+
       const data = await response.json();
-      console.log('Response from server:', data); // Debugging log
-  
+
       if (data.error) {
         setError(data.error);
       } else {
         setError(''); // Clear any previous error messages
         alert(data.message); // Success message from backend
-  
+
         // Store item in localStorage
         const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const newItem = {
@@ -92,7 +79,7 @@ function Achter() {
           price: numericPrice,
           totalPrice: numericPrice * quantity,
         };
-  
+
         const existingItemIndex = cartItems.findIndex((item) => item.id === Id);
         if (existingItemIndex !== -1) {
           cartItems[existingItemIndex].quantity += quantity;
@@ -100,42 +87,22 @@ function Achter() {
         } else {
           cartItems.push(newItem);
         }
-  
+
         localStorage.setItem('cart', JSON.stringify(cartItems));
       }
     } catch (error) {
       setError('Error adding item to cart');
-      console.error('Error:', error); // Debugging log
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" style={{ marginTop: "40%", width: "500px" }}>
       <div className="flex flex-col md:flex-row md:space-x-4">
         <div className="flex-1 mb-4">
           <img src={currentImage} alt="Main" className="w-3/4 h-auto rounded-lg shadow-lg" />
-        </div>
-        <div className="flex flex-col space-y-2">
-          <img
-            src={thumbnail1}
-            alt="Thumbnail 1"
-            onClick={() => handleThumbnailClick(thumbnail1)}
-            className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-75"
-          />
-          <img
-            src={thumbnail2}
-            alt="Thumbnail 2"
-            onClick={() => handleThumbnailClick(thumbnail2)}
-            className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-75"
-          />
-          <img
-            src={oif}
-            alt="Thumbnail 3"
-            onClick={() => handleThumbnailClick(oif)}
-            className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-75"
-          />
         </div>
       </div>
 

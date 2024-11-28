@@ -44,6 +44,43 @@ function PaymentPage() {
         fetchOrderData();
     }, []);
 
+    // Handle Delete All Items
+    const handleDeleteAllItems = async () => {
+        setLoading(true);
+        setError(null);
+    
+        try {
+            const userId = localStorage.getItem('user_id');
+            if (!userId) {
+                setError('User is not logged in.');
+                return;
+            }
+    
+            // Send a request to delete all items for the user
+            const response = await fetch('http://localhost/BACKEND/deleteOrder.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }), // Pass userId to the backend
+            });
+    
+            const data = await response.json();
+            if (data.success) {
+                alert(data.success);
+                setOrderData(null); // Clear the order data from state
+                navigate('/'); // Redirect to home page or cart page
+            } else {
+                setError(data.error || 'Failed to delete items');
+            }
+        } catch (error) {
+            setError('An error occurred: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle Payment
     const handlePayment = async () => {
         setLoading(true);
         setError(null);
@@ -106,7 +143,7 @@ function PaymentPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 bg-gray-100 rounded shadow-lg">
+        <div className="container mx-auto p-6 bg-gray-100 rounded shadow-lg" style={{ marginTop: "40%", width: "500px" }}>
             <h1 className="text-2xl font-bold text-center mb-4">Payment Page</h1>
 
             {orderData ? (
@@ -119,7 +156,7 @@ function PaymentPage() {
                                     <strong>Cart ID:</strong> {item.cart_id} <br />
                                     <strong>Item ID:</strong> {item.item_id} <br />
                                     <strong>Quantity:</strong> {item.quantity} <br />
-                                    <strong>Price:</strong> {item.price}€
+                                    <strong>Price:</strong> {item.price}€ <br />
                                 </p>
                             </li>
                         ))}
@@ -131,6 +168,14 @@ function PaymentPage() {
             ) : (
                 <p>No items found in your order.</p>
             )}
+
+            {/* Button to Delete All Items */}
+            <button
+                onClick={handleDeleteAllItems}
+                className="bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-600"
+            >
+                Delete All Items
+            </button>
 
             {/* Payment Form */}
             <div className="mt-6">

@@ -64,7 +64,7 @@ function App() {
           }
         />
        <Route
-  path="/item/:Id/price/:price"
+  path="/item/:Id/price/:price/image/:image"
   element={
     <>
       <Header />
