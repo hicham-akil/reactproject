@@ -9,18 +9,26 @@ function Nav() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState(null); // Store the username
+  const [username, setUsername] = useState(null);
+  const [navBackground, setNavBackground] = useState(false);
 
   const navigate = useNavigate();
 
-  // Update authentication state on initial load
   useEffect(() => {
     const userId = localStorage.getItem('user_id');
-    const storedUsername = localStorage.getItem('firstName'); // Assuming firstName is stored after login
+    const storedUsername = localStorage.getItem('firstName');
     if (userId && storedUsername) {
       setIsAuthenticated(true);
-      setUsername(storedUsername); // Set the username from localStorage
+      setUsername(storedUsername);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavBackground(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleAuthClick = () => {
@@ -29,7 +37,7 @@ function Nav() {
       localStorage.removeItem('firstName');
       localStorage.removeItem('lastName');
       setIsAuthenticated(false);
-      setUsername(null); // Clear the username
+      setUsername(null);
       navigate('/login');
     } else {
       navigate('/login');
@@ -71,9 +79,9 @@ function Nav() {
   };
 
   return (
-    <nav className="bg-black text-white py-4 w-full z-50">
+    <nav className={`py-4 w-full z-50 ${navBackground ? 'bg-white' : 'bg-black'} text-white transition-all`}>
       <div className="container mx-auto flex justify-between items-center px-8">
-        <h1 className="font-[Montserrat] text-2xl">
+        <h1 className={`font-[Montserrat] text-2xl ${navBackground ? 'text-blue-300' : 'bg-black'}`}>
           Pluie <span className="text-blue-400">&</span> Style
         </h1>
         <div className="menu flex space-x-12">
