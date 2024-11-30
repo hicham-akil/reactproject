@@ -1,4 +1,6 @@
 import pic from '../img/girl.jpg';
+import pic2 from '../img/OIP.jpg';
+import pic3 from '../img/oop.jpg';
 
 function Header() {
   return (
@@ -30,15 +32,28 @@ function Header() {
           className="border border-gray-400 rounded-lg p-3 w-64 sm:w-72 md:w-96 text-center"
           placeholder="Entrez votre recherche"
         />
-        <div className="mt-6 relative right-1/4">
-          <img
-            src={pic}
-            alt="Girl with umbrella"
-            className="w-70 sm:w-96 md:w-[400px] lg:w-[500px] rounded-lg shadow-lg transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out border-4"
-            />
-     
-        </div>
       </div>
+      <div className="mt-6 w-full flex flex-col sm:flex-row  space-x-4">
+  
+  <img
+    src={pic}
+    alt="Girl with umbrella"
+    className="w-[300px]  translate-x-[40px] sm:w-[350px] md:w-[400px] lg:w-[350px] rounded-lg shadow-lg border-4" style={{width:"900px",height:"500px"}}
+  />
+  
+ 
+  <img
+    src={pic2}
+    alt="Girl with umbrella2"
+    className="w-[400px] translate-x-[400px] sm:w-[550px] md:w-[600px] lg:w-[550px] rounded-lg shadow-lg border-4" style={{height:"250px"}}
+  />
+  <img
+    src={pic3}
+    alt="Girl with umbrella3"
+    className="w-[400px] relative  translate-y-[250px]  sm:w-[550px] md:w-[600px] lg:w-[550px] rounded-lg shadow-lg border-4" style={{height:"250px", right:"130px"}}
+  />
+</div>
+
     </>
   );
 }

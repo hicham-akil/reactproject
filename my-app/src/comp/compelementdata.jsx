@@ -18,18 +18,20 @@ export default function Data() {
   };
 
   return (
-    <div className="flex flex-col mt-auto pt-6" style={{ marginTop: "35%" }}>
+    <div className="flex flex-col mt-auto pt-6" >
+      <h1 className="text-2xl text-center mt-20 ">  New Arrivals</h1>
+      <p className="text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia, perspiciatis.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-6">
         {items.map((item) => (
           <div
             key={item.id}
-            className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-between"
+            className="bg-light-gray p-4 rounded-lg shadow-md flex flex-col justify-between" style={{width:"350px",height:"350px"}}
           >
             <img
               style={{ width: "150px" }}
               src={item.src}
               alt={`Image for ${item.p}`}
-              className="w-full h-32 object-cover rounded mb-3"
+              className="w-full translate-x-20 h-32 object-cover rounded mb-3"
             />
             <h3 className="text-lg font-semibold text-gray-800 text-center">
               {item.p}

@@ -25,7 +25,7 @@ function Nav() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setNavBackground(window.scrollY > 10);
+      setNavBackground(window.scrollY > 5);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -85,27 +85,41 @@ function Nav() {
           Pluie <span className="text-blue-400">&</span> Style
         </h1>
         <div className="menu flex space-x-12">
-          <a href="#" className="relative group hover:text-gray-400">Home</a>
-          <a href="#" className="relative group hover:text-gray-400">Products</a>
-          <a href="#" className="relative group hover:text-gray-400">About</a>
-          <a href="#" className="relative group hover:text-gray-400">Contact</a>
-        </div>
-        <button
-          onClick={fetchOrderData}
-          className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
-        >
-          Panier
-        </button>
-        <div className="flex items-center space-x-4">
+  <a href="#" className="relative group hover:text-gray-400">
+    Home
+    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
+  </a>
+  <a href="#" className="relative group hover:text-gray-400">
+    Products
+    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
+  </a>
+  <a href="#" className="relative group hover:text-gray-400">
+    About
+    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
+  </a>
+  <a href="#" className="relative group hover:text-gray-400">
+    Contact
+    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
+  </a>
+</div>
+
+      
+        <div className="flex items-center  space-x-4">
           {isAuthenticated && username && (
-            <span className="text-white font-semibold">Hello, {username}!</span>
+            <span className="text-white translate-x-32 font-semibold">{username}!</span>
           )}
           <button
             onClick={handleAuthClick}
-            className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 ml-4"
+            className="bg-green-500 translate-x-32 text-white px-4 py-2 rounded-full hover:bg-green-600 ml-4"
           >
             {isAuthenticated ? 'Se Déconnecter' : 'Se Connecter'}
           </button>
+          <button
+          onClick={fetchOrderData}
+          className="bg-blue-500 translate-x-[200px] text-white px-4 py-2 rounded-full hover:bg-blue-600"
+        >
+          Panier
+        </button>
         </div>
       </div>
       {loading && <div className="text-center text-white mt-2">Chargement en cours...</div>}
