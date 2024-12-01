@@ -85,10 +85,13 @@ function Nav() {
           Pluie <span className="text-blue-400">&</span> Style
         </h1>
         <div className="menu flex space-x-12">
-  <a href="#" className="relative group hover:text-gray-400">
-    Home
-    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-  </a>
+        <a
+  onClick={() => navigate('/')}
+  className="relative group cursor-pointer hover:text-gray-400"
+>
+  Home
+  <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
+</a>
   <a href="#" className="relative group hover:text-gray-400">
     Products
     <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
@@ -122,34 +125,36 @@ function Nav() {
         </button>
         </div>
       </div>
-      {loading && <div className="text-center text-white mt-2">Chargement en cours...</div>}
-      {error && <div className="text-center text-red-500 mt-2">{error}</div>}
-      {showOrder && (
-        <div className="order-info bg-gray-100 p-4 mt-4 rounded shadow-lg mx-auto w-1/5 mr-20">
-          <h2 className="text-lg font-bold">Votre Commande</h2>
-          {orderData ? (
-            <ul>
-              {orderData.items.length > 0 ? (
-                orderData.items.map((item, index) => (
-                  <li key={index} className="mt-2">
-                    Cart ID: {item.cart_id} - Item ID: {item.item_id} - Quantity: {item.quantity} - Price: {item.price}€
-                  </li>
-                ))
-              ) : (
-                <p>Aucun article dans la commande.</p>
-              )}
-            </ul>
-          ) : (
-            <p>Chargement de la commande...</p>
-          )}
-          <button
-            onClick={() => navigate('/payment')}
-            className="mt-4 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
-          >
-            Payer
-          </button>
-        </div>
-      )}
+      {loading && <div className="text-center text-black mt-2">Chargement en cours...</div>}
+{error && <div className="text-center text-red-500 mt-2">{error}</div>}
+{showOrder && (
+  <div className="order-info bg-gray-100 p-4 mt-4 rounded shadow-lg mx-auto w-1/5 mr-20">
+    <h2 className="text-lg font-bold text-black">Votre Commande</h2>
+    {orderData ? (
+      <ul>
+        {orderData.items.length > 0 ? (
+          orderData.items.map((item, index) => (
+            <li key={index} className="mt-2 text-black">
+              <strong>Cart ID:</strong> {item.cart_id} - <strong>Item ID:</strong> {item.item_id} - <strong>Quantity:</strong> {item.quantity} - <strong>Price:</strong> {item.price}€
+            </li>
+          ))
+        ) : (
+          <p className="text-black">Aucun article dans la commande.</p>
+        )}
+      </ul>
+    ) : (
+      <p className="text-black">Chargement de la commande...</p>
+    )}
+    <button
+      onClick={() => navigate('/payment')}
+      className="mt-4 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+    >
+      Payer
+    </button>
+  </div>
+)}
+
+     
     </nav>
   );
 }

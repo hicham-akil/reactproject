@@ -143,7 +143,7 @@ function PaymentPage() {
     }
 
     return (
-        <div className="container mx-auto p-6 bg-gray-100 rounded shadow-lg" style={{ marginTop: "40%", width: "500px" }}>
+        <div className="container mx-auto p-6 bg-gray-100 rounded shadow-lg" style={{ width: "500px" }}>
             <h1 className="text-2xl font-bold text-center mb-4">Payment Page</h1>
 
             {orderData ? (

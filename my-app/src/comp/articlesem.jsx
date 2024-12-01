@@ -25,7 +25,7 @@ export default function Sem() {
 
   return (
     <div>
-      <h1 className="font-bold text-center text-2xl ">article de la semaine</h1>
+      <h1 className="font-bold text-center text-2xl ">Xomming soon</h1>
       <div className="flex justify-center items-center">
         <div  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-5  mt-5 p-8 divw">
           {items.map((item, index) => (

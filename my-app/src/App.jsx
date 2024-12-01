@@ -39,8 +39,8 @@ function App() {
           path="/about"
           element={
             <>
-              <Header />
               <Nav />
+              <Header />
               <div className="about-content">
                 <h2>About Us</h2>
                 <p>Here you can add details about your company or website.</p>
@@ -55,8 +55,8 @@ function App() {
           path="/admin-dashboard"
           element={
             <>
-              <Header />
               <Nav />
+              <Header />
               {/* <AdminDashboard />  Admin Dashboard page for admins */}
               <Footer />
             </>
@@ -68,7 +68,6 @@ function App() {
           path="/item/:Id/price/:price/image/:image"
           element={
             <>
-              <Header />
               <Nav />
               <Achter />
               <Footer />
@@ -81,7 +80,6 @@ function App() {
           path="/payment"
           element={
             <>
-              <Header />
               <Nav />
               <PaymentPage />
               <Footer />

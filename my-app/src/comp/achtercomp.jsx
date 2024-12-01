@@ -2,37 +2,40 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 function Achter() {
-  const { Id, price, image } = useParams(); // Extract 'Id', 'price', and 'image' from the URL
-  const [currentImage, setCurrentImage] = useState(decodeURIComponent(image) || 'default-image.jpg'); // Decode the URL component
-  const [quantity, setQuantity] = useState(1); // Default quantity is 1
-  const [userId, setUserId] = useState(null); // For storing userId (from localStorage)
-  const [itemData, setItemData] = useState({ name: 'Loading...', price: '...' }); // Item data
-  const [error, setError] = useState(''); // To handle error messages
-  const [loading, setLoading] = useState(false); // To track loading state
-  const [numericPrice, setNumericPrice] = useState(null); // To store numeric value of price
+  const { Id, price, image } = useParams();
+  const [currentImage, setCurrentImage] = useState(decodeURIComponent(image) || 'default-image.jpg');
+  const [quantity, setQuantity] = useState(1);
+  const [userId, setUserId] = useState(null);
+  const [itemData, setItemData] = useState({ name: 'Loading...', price: '...', description: 'Loading product details...' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [numericPrice, setNumericPrice] = useState(null);
 
-  // Extract numeric price from the URL
   useEffect(() => {
     if (price) {
-      const numeric = parseFloat(price.replace('$', '')); // Remove '$' and convert to number
+      const numeric = parseFloat(price.replace('$', ''));
       setNumericPrice(numeric);
     }
   }, [price]);
 
-  // Fetch user ID from localStorage when component mounts
   useEffect(() => {
-    const storedUserId = localStorage.getItem('user_id'); // Fetch from localStorage
+    const storedUserId = localStorage.getItem('user_id');
     if (storedUserId) {
-      setUserId(storedUserId); // Set userId if it exists
+      setUserId(storedUserId);
     } else {
       setError('Please log in to add items to your cart');
     }
   }, []);
 
-  // Set item data directly from the URL
   useEffect(() => {
     if (Id && price) {
-      setItemData({ name: `Item ${Id}`, price: price });
+      setItemData({
+        name: `Item ${Id}`,
+        price,
+        description: `This is a detailed description of Item ${Id}. It's designed to provide a better understanding of the product, highlighting its features and benefits.`,
+        category: 'Electronics',
+        rating: 4.5,
+      });
     } else {
       setError('Item not found');
     }
@@ -43,8 +46,7 @@ function Achter() {
       setError('Please log in to add items to your cart');
       return;
     }
-
-    if (!Id || !quantity || quantity < 1) {
+    if (!Id || quantity < 1) {
       setError('Please select a valid item and quantity.');
       return;
     }
@@ -57,25 +59,22 @@ function Achter() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify(dataToSend),
       });
-
       const data = await response.json();
 
       if (data.error) {
         setError(data.error);
       } else {
-        setError(''); // Clear any previous error messages
-        alert(data.message); // Success message from backend
-
-        // Store item in localStorage
+        alert(data.message);
+        setError('');
         const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const newItem = {
           id: Id,
           name: itemData.name,
-          quantity: quantity,
+          quantity,
           price: numericPrice,
           totalPrice: numericPrice * quantity,
         };
@@ -92,47 +91,43 @@ function Achter() {
       }
     } catch (error) {
       setError('Error adding item to cart');
-      console.error('Error:', error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-4" style={{ marginTop: "40%", width: "500px" }}>
-      <div className="flex flex-col md:flex-row md:space-x-4">
-        <div className="flex-1 mb-4">
-          <img src={currentImage} alt="Main" className="w-3/4 h-auto rounded-lg shadow-lg" />
+    <div className="max-w-2xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md" style={{marginTop:"40px"}}>
+      <div className="flex flex-col md:flex-row items-center">
+        <img src={currentImage} alt={itemData.name} className="w-full md:w-1/2 rounded-lg shadow-lg" />
+        <div className="md:ml-6 mt-4 md:mt-0">
+          <h1 className="text-3xl font-semibold text-gray-800">{itemData.name}</h1>
+          <p className="text-xl text-gray-600">Price: {itemData.price}</p>
+          <p className="text-sm text-gray-500 mt-2">Category: {itemData.category}</p>
+          <p className="text-sm text-yellow-500 mt-1">Rating: ⭐ {itemData.rating}/5</p>
         </div>
       </div>
 
-      <div className="info mt-4 p-4 bg-white rounded-lg shadow-md">
-        {loading ? (
-          <p>Loading item data...</p>
-        ) : (
-          <>
-            <h1 className="text-2xl font-bold mb-2">{itemData.name}</h1>
-            <p className="text-lg text-gray-700 mb-4">Price: {itemData.price}</p>
-          </>
-        )}
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setQuantity((prev) => prev + 1)}
-            className="bg-gray-200 rounded-md px-2 py-1"
-          >
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold text-gray-800">Description</h2>
+        <p className="text-gray-700 mt-2">{itemData.description}</p>
+      </div>
+
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold text-gray-800">Quantity</h2>
+        <div className="flex items-center space-x-4">
+          <button onClick={() => setQuantity((prev) => prev + 1)} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
             +
           </button>
-          <span className="text-lg">{quantity}</span>
-          <button
-            onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
-            className="bg-gray-200 rounded-md px-2 py-1"
-          >
+          <span className="text-xl">{quantity}</span>
+          <button onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
             -
           </button>
           <button
             onClick={addToCart}
             disabled={loading}
-            className="bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-600 transition duration-300 disabled:bg-gray-400"
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded transition duration-300 disabled:bg-gray-400"
           >
             {loading ? 'Adding...' : 'Add to Cart'}
           </button>
