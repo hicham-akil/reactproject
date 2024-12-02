@@ -27,8 +27,8 @@ function App() {
               <Header />
               {/* <Slider /> */}
               <Data />
-              <Sem />
               <Avis />
+              <Sem />
               <Footer />
             </>
           }

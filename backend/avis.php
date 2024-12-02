@@ -31,37 +31,48 @@ if ($conn->connect_error) {
 }
 
 // Check if user_id is provided
-if (isset($_GET['user_id'])) {
+if (isset($_GET['user_id']) && is_numeric($_GET['user_id'])) {
     $user_id = (int)$_GET['user_id'];
 
-    // Query to fetch all reviews and the current user's review
-    $allReviewsQuery = "SELECT avis.id, avis.user_id, avis.rating, avis.comment, users.name AS author_name 
-                        FROM avis 
-                        LEFT JOIN users ON avis.user_id = users.id";
-    $userReviewQuery = "SELECT * FROM avis WHERE user_id = ?";
+    // Query to fetch all reviews
+    $allReviewsQuery = "
+        SELECT avis.id, avis.rating, avis.comment
+        FROM avis 
+       
+    ";
 
     // Fetch all reviews
     $allReviews = [];
-    $result = $conn->query($allReviewsQuery);
-    if ($result) {
+    if ($result = $conn->query($allReviewsQuery)) {
         while ($row = $result->fetch_assoc()) {
             $allReviews[] = $row;
         }
+        $result->free();
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error fetching all reviews: ' . $conn->error]);
+        $conn->close();
+        exit;
     }
 
     // Fetch the logged-in user's review
     $userReview = null;
+    $userReviewQuery = "SELECT * FROM avis WHERE user_id = ?";
     if ($stmt = $conn->prepare($userReviewQuery)) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
-        $userReview = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
+        $userReview = $result->fetch_assoc();
         $stmt->close();
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error preparing user review query: ' . $conn->error]);
+        $conn->close();
+        exit;
     }
 
     // Respond with all reviews and the user's review
     echo json_encode(['success' => true, 'allReviews' => $allReviews, 'userReview' => $userReview]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'User ID not provided']);
+    echo json_encode(['success' => false, 'message' => 'Invalid or missing user ID']);
 }
 
 $conn->close();
