@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Nav() {
-  const [isHovered, setIsHovered] = useState(false);
-  const [scrolly, setScrolly] = useState(0);
+  const [navBackground, setNavBackground] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState(null);
-  const [navBackground, setNavBackground] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,9 +32,7 @@ function Nav() {
 
   const handleAuthClick = () => {
     if (isAuthenticated) {
-      localStorage.removeItem('user_id');
-      localStorage.removeItem('firstName');
-      localStorage.removeItem('lastName');
+      localStorage.clear();
       setIsAuthenticated(false);
       setUsername(null);
       navigate('/login');
@@ -56,9 +53,7 @@ function Nav() {
         }
         const response = await fetch('http://localhost/BACKEND/order.php', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId }),
         });
         if (response.ok) {
@@ -69,7 +64,7 @@ function Nav() {
           setError('Failed to fetch order data');
         }
       } catch (error) {
-        setError('Error fetching order data: ' + error.message);
+        setError(`Error fetching order data: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -79,82 +74,83 @@ function Nav() {
   };
 
   return (
-    <nav className={`py-4 w-full z-50 ${navBackground ? 'bg-white' : 'bg-black'} text-white transition-all`}>
-      <div className="container mx-auto flex justify-between items-center px-8">
-        <h1 className={`font-[Montserrat] text-2xl ${navBackground ? 'text-blue-300' : 'bg-black'}`}>
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all ${navBackground ? 'bg-white shadow-md' : 'bg-black'}`}>
+      <div className="container mx-auto flex justify-between items-center px-4 sm:px-8 py-4">
+        <h1 className={`text-2xl font-bold transition-colors ${navBackground ? 'text-blue-600' : 'text-white'}`}>
           Pluie <span className="text-blue-400">&</span> Style
         </h1>
-        <div className="menu flex space-x-12">
-        <a
-  onClick={() => navigate('/')}
-  className="relative group cursor-pointer hover:text-gray-400"
->
-  Home
-  <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-</a>
-  <a href="#" className="relative group hover:text-gray-400">
-    Products
-    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-  </a>
-  <a href="#" className="relative group hover:text-gray-400">
-    About
-    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-  </a>
-  <a href="#" className="relative group hover:text-gray-400">
-    Contact
-    <span className="absolute left-0 -top-1 w-0 h-1 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-  </a>
-</div>
 
-      
-        <div className="flex items-center  space-x-4">
-          {isAuthenticated && username && (
-            <span className="text-white translate-x-32 font-semibold">{username}!</span>
-          )}
-          <button
-            onClick={handleAuthClick}
-            className="bg-green-500 translate-x-32 text-white px-4 py-2 rounded-full hover:bg-green-600 ml-4"
-          >
-            {isAuthenticated ? 'Se Déconnecter' : 'Se Connecter'}
-          </button>
-          <button
-          onClick={fetchOrderData}
-          className="bg-blue-500 translate-x-[200px] text-white px-4 py-2 rounded-full hover:bg-blue-600"
+        <button
+          className="md:hidden text-black focus:outline-none"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
         >
-          Panier
+          ☰
         </button>
+
+        <div
+          className={`flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 ${
+            menuOpen ? 'flex' : 'hidden md:flex'
+          }`}
+        >
+          <a onClick={() => navigate('/')} className="text-white hover:text-gray-300 cursor-pointer">
+            Home
+          </a>
+          <a href="#" className="text-white hover:text-gray-300">
+            Products
+          </a>
+          <a href="#" className="text-white hover:text-gray-300">
+            About
+          </a>
+          <a href="#" className="text-white hover:text-gray-300">
+            Contact
+          </a>
+
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            {isAuthenticated && (
+              <span className="text-white text-center font-semibold">{username}!</span>
+            )}
+            <button
+              onClick={handleAuthClick}
+              className="bg-green-500 px-4 py-2 text-white rounded-full hover:bg-green-600"
+            >
+              {isAuthenticated ? 'Se Déconnecter' : 'Se Connecter'}
+            </button>
+            <button
+              onClick={fetchOrderData}
+              className="bg-blue-500 px-4 py-2 text-white rounded-full hover:bg-blue-600"
+            >
+              Panier
+            </button>
+          </div>
         </div>
       </div>
-      {loading && <div className="text-center text-black mt-2">Chargement en cours...</div>}
-{error && <div className="text-center text-red-500 mt-2">{error}</div>}
-{showOrder && (
-  <div className="order-info bg-gray-100 p-4 mt-4 rounded shadow-lg mx-auto w-1/5 mr-20">
-    <h2 className="text-lg font-bold text-black">Votre Commande</h2>
-    {orderData ? (
-      <ul>
-        {orderData.items.length > 0 ? (
-          orderData.items.map((item, index) => (
-            <li key={index} className="mt-2 text-black">
-              <strong>Cart ID:</strong> {item.cart_id} - <strong>Item ID:</strong> {item.item_id} - <strong>Quantity:</strong> {item.quantity} - <strong>Price:</strong> {item.price}€
-            </li>
-          ))
-        ) : (
-          <p className="text-black">Aucun article dans la commande.</p>
-        )}
-      </ul>
-    ) : (
-      <p className="text-black">Chargement de la commande...</p>
-    )}
-    <button
-      onClick={() => navigate('/payment')}
-      className="mt-4 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
-    >
-      Payer
-    </button>
-  </div>
-)}
 
-     
+      {loading && <div className="text-center text-black mt-4">Chargement...</div>}
+      {error && <div className="text-center text-red-500 mt-2">{error}</div>}
+      {showOrder && (
+        <div className="bg-gray-100 p-4 mt-4 rounded shadow-lg mx-auto w-11/12 md:w-1/2">
+          <h2 className="text-lg font-bold mb-2">Votre Commande</h2>
+          {orderData?.items?.length ? (
+            <ul className="list-disc pl-5">
+              {orderData.items.map((item, index) => (
+                <li key={index} className="mb-2">
+                  <strong>Cart ID:</strong> {item.cart_id}, <strong>Item:</strong> {item.item_id},{' '}
+                  <strong>Qty:</strong> {item.quantity}, <strong>Price:</strong> {item.price}€
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Aucun article trouvé.</p>
+          )}
+          <button
+            onClick={() => navigate('/payment')}
+            className="bg-green-500 mt-4 px-4 py-2 rounded hover:bg-green-600"
+          >
+            Payer
+          </button>
+        </div>
+      )}
     </nav>
   );
 }

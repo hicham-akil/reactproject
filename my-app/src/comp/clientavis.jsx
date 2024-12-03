@@ -4,7 +4,6 @@ export default function Avis() {
   const [allReviews, setAllReviews] = useState([]);
   const [userReview, setUserReview] = useState(null);
   const [newReview, setNewReview] = useState({ rating: "", comment: "" });
-  const [showContent, setShowContent] = useState(false); // Toggle entire component visibility
   const user_id = localStorage.getItem("user_id");
 
   useEffect(() => {
@@ -73,78 +72,68 @@ export default function Avis() {
   };
 
   return (
-    <div className="flex flex-col items-center py-8 translate-x-[400px] ">
-      <button
-        onClick={() => setShowContent(!showContent)}
-        className={`mb-6 px-4 py-2 w-[90px] rounded-full transition-all duration-300 ${
-          showContent ? "bg-red-500 text-white" : "bg-green-500 text-white"
-        }`}
-      >
-        {showContent ? "Cacher les avis" : "Afficher les avis"}
-      </button>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold text-center">Avis de nos clients</h1>
 
-      {showContent && (
-        <div>
-          <h1 className="text-2xl font-bold">Avis de nos clients</h1>
-
-          {/* Display all reviews */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-white mt-5 p-8 rounded-lg shadow-md">
-            {allReviews.length > 0 ? (
-              allReviews.map((review) => (
-                <div
-                  key={review.id}
-                  className="p-4 bg-pink-50 rounded-lg transition hover:shadow-lg"
-                >
-                  <div className="text-xl">{'★'.repeat(review.rating)}</div>
-                  <p className="mt-2">{review.comment}</p>
-                  <span className="block mt-2 font-semibold">{review.author_name}</span>
-                </div>
-              ))
-            ) : (
-              <p>Aucun avis pour le moment.</p>
-            )}
-          </div>
-
-          {/* User's Review Section */}
-          {userReview ? (
-            <div className="mt-6 bg-white p-6 rounded-lg shadow-md w-96">
-              <h2 className="text-lg font-bold">Votre avis</h2>
-              <div className="text-xl">{'★'.repeat(userReview.rating)}</div>
-              <p className="mt-2">{userReview.comment}</p>
-              <button
-                onClick={handleDelete}
-                className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Supprimer
-              </button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 bg-white mt-5 p-8 rounded-lg shadow-md">
+        {allReviews.length > 0 ? (
+          allReviews.map((review) => (
+            <div
+              key={review.id}
+              className="p-4 bg-pink-50 rounded-lg transition hover:shadow-lg"
+            >
+              <div className="text-xl">{'★'.repeat(review.rating)}</div>
+              <p className="mt-2">{review.comment}</p>
+              <span className="block mt-2 font-semibold">{review.author_name}</span>
             </div>
-          ) : (
-            <form className="mt-6 bg-white p-6 rounded-lg shadow-md w-96" onSubmit={handleSubmit}>
-              <h2 className="text-lg font-bold mb-4">Ajouter un avis</h2>
-              <input
-                type="number"
-                name="rating"
-                placeholder="Rating (1-5)"
-                value={newReview.rating}
-                onChange={handleInputChange}
-                required
-                className="w-full p-2 border rounded mb-3"
-              />
-              <textarea
-                name="comment"
-                placeholder="Votre commentaire"
-                value={newReview.comment}
-                onChange={handleInputChange}
-                required
-                className="w-full p-2 border rounded mb-3"
-              ></textarea>
-              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                Soumettre
-              </button>
-            </form>
-          )}
-        </div>
-      )}
+          ))
+        ) : (
+          <p>Aucun avis pour le moment.</p>
+        )}
+      </div>
+
+      <div className="flex justify-center mt-6">
+        {userReview ? (
+          <div className="bg-white mb-10 p-6 rounded-lg shadow-md w-full max-w-md">
+            <h2 className="text-lg font-bold">Votre avis</h2>
+            <div className="text-xl">{'★'.repeat(userReview.rating)}</div>
+            <p className="mt-2">{userReview.comment}</p>
+            <button
+              onClick={handleDelete}
+              className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Supprimer
+            </button>
+          </div>
+        ) : (
+          <form
+            className="bg-white p-6 rounded-lg shadow-md w-full max-w-md mb-10"
+            onSubmit={handleSubmit}
+          >
+            <h2 className="text-lg font-bold mb-4">Ajouter un avis</h2>
+            <input
+              type="number"
+              name="rating"
+              placeholder="Rating (1-5)"
+              value={newReview.rating}
+              onChange={handleInputChange}
+              required
+              className="w-full p-2 border rounded mb-3"
+            />
+            <textarea
+              name="comment"
+              placeholder="Votre commentaire"
+              value={newReview.comment}
+              onChange={handleInputChange}
+              required
+              className="w-full p-2 border rounded mb-3"
+            ></textarea>
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+              Soumettre
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
