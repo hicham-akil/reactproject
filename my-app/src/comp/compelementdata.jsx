@@ -19,7 +19,13 @@ export default function Data() {
 
   return (
     <div className="flex flex-col mt-auto pt-6" >
-      <h1 className="text-2xl text-center mt-20 ">  New Arrivals</h1>
+       <div class="bigdud">
+      <div class="bul1"></div>
+      <div class="article">
+        <p>ARTICLE</p>
+      </div>
+      <div class="bul2"></div>
+    </div>
       <p className="text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia, perspiciatis.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-6">
         {items.map((item) => (
