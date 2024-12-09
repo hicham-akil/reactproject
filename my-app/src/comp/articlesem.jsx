@@ -12,7 +12,7 @@ export default function Sem() {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10">
+    <div className="bg-gray-100  py-10">
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10">
         Coming Soon
       </h1>

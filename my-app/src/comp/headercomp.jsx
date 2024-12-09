@@ -1,8 +1,27 @@
-import pic from '../img/girl.jpg';
-import pic2 from '../img/OIP.jpg';
-import pic3 from '../img/oop.jpg';
+import React, { useState } from "react";
+import pic from "../img/girl.jpg";
+import pic2 from "../img/OIP.jpg";
+import pic3 from "../img/oop.jpg";
 
 function Header() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) return;
+  
+    try {
+      const response = await fetch(`http://localhost/backend/cherche.php?q=${encodeURIComponent(searchTerm)}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  };
+
   return (
     <>
       {/* Info Section */}
@@ -29,12 +48,51 @@ function Header() {
         <p className="text-2xl sm:text-xl md:text-2xl font-bold text-gray-900 mb-4">
           Cherchez le parapluie
         </p>
-        <input
-          type="text"
-          className="border border-gray-400 rounded-lg p-3 w-11/12 sm:w-72 md:w-96 text-center"
-          placeholder="Entrez votre recherche"
-        />
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-400 rounded-lg p-3 w-11/12 sm:w-72 md:w-96 text-center"
+            placeholder="Entrez votre recherche"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          >
+            Rechercher
+          </button>
+        </div>
       </div>
+
+      {/* Search Results Section */}
+      {searchResults.length > 0 && (
+        <div className="results mt-6">
+          <h2 className="text-xl font-bold mb-4">Résultats :</h2>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {searchResults.map((item) => (
+              <li key={item.id} className="mb-4 flex items-center p-4 border rounded-lg shadow-md hover:shadow-lg transition duration-200">
+                {/* Product Image */}
+                <img
+                  src={item.src}
+                  alt={item.p}
+                  className="w-16 h-16 object-cover rounded-lg shadow-md mr-4"
+                />
+                <div>
+                  {/* Product Name as Link */}
+                  <a
+                    href={`http://localhost:5174/item/${item.id}/price/${item.price}/image/${encodeURIComponent(item.src)}`}
+                    className="font-bold text-blue-500 hover:underline text-sm sm:text-base"
+                  >
+                    {item.p}
+                  </a>
+                  <p className="text-gray-700 text-xs sm:text-sm">Price: ${item.price}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Images Section */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

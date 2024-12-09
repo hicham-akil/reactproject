@@ -81,35 +81,37 @@ function Nav() {
         </h1>
 
         <button
-          className="md:hidden text-black focus:outline-none"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation menu"
-        >
-          ☰
-        </button>
+  className="md:hidden focus:outline-none p-2 rounded bg-gray-200"
+  onClick={() => setMenuOpen(!menuOpen)}
+  aria-label="Toggle navigation menu"
+>
+  ☰
+</button>
+
 
         <div
           className={`flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 ${
             menuOpen ? 'flex' : 'hidden md:flex'
           }`}
         >
-          <a onClick={() => navigate('/')} className="text-white hover:text-gray-300 cursor-pointer">
+          <a onClick={() => navigate('/')} className="text-white hover:text-gray-300 translate-y-1 mt-2 cursor-pointer">
             Home
           </a>
-          <a href="#" className="text-white hover:text-gray-300">
+          <a href="#" className="text-white hover:text-gray-300 translate-y-3  ">
             Products
           </a>
-          <a href="#" className="text-white hover:text-gray-300">
+          <a href="#" className="text-white hover:text-gray-300  translate-y-3 ">
             About
           </a>
-          <a href="#" className="text-white hover:text-gray-300">
+          <a href="#" className="text-white hover:text-gray-300 translate-y-3  ">
             Contact
           </a>
-
-          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-            {isAuthenticated && (
-              <span className="text-white text-center font-semibold">{username}!</span>
+          {isAuthenticated && (
+              <span className="text-white text-center font-semibold translate-y-3 translate-x-5">{username}!</span>
             )}
+
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4  translate-x-5 md:space-y-0">
+          
             <button
               onClick={handleAuthClick}
               className="bg-green-500 px-4 py-2 text-white rounded-full hover:bg-green-600"
