@@ -12,21 +12,21 @@ import PaymentPage from './comp/paycomp';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/page1';
 import About from './pages/page2';
-import './index.css';  // Import the CSS where you included Tailwind directives
+import './index.css';  
+import { Aboutcomp } from './comp/aboutcomp';
 
 function App() {
   return (
     <div className="maindiv">
       <Routes>
-        {/* Home Page Route */}
         <Route
           path="/"
           element={
             <>
               <Nav />
               <Header />
-              {/* <Slider /> */}
               <Data />
+              <Aboutcomp/>
               <Sem />
               <Avis />
               <Footer />
@@ -34,7 +34,6 @@ function App() {
           }
         />
         
-        {/* About Page Route */}
         <Route
           path="/about"
           element={
@@ -50,20 +49,17 @@ function App() {
           }
         />
         
-        {/* Admin Dashboard Route */}
         <Route
           path="/admin-dashboard"
           element={
             <>
               <Nav />
               <Header />
-              {/* <AdminDashboard />  Admin Dashboard page for admins */}
               <Footer />
             </>
           }
         />
         
-        {/* Item Details Page Route */}
         <Route
           path="/item/:Id/price/:price/image/:image"
           element={
@@ -75,7 +71,6 @@ function App() {
           }
         />
         
-        {/* Payment Page Route */}
         <Route
           path="/payment"
           element={
