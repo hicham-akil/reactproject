@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import pic1 from "../img/depar.jpg";
+import pic2 from "../img/manq.jpg";
+import pic3 from "../img/PARA.jpg";
 export const Aboutcomp = () => {
   const [isInView, setIsInView] = useState(false);
 
@@ -49,25 +51,25 @@ export const Aboutcomp = () => {
         </span>
       </div>
 
-      <div  style={{height:"700px"}} className="flex  flex-row w-full bg-gray-200 lg:flex-row justify-between items-center gap-8">
+      <div  style={{height:"700px"}} className="flex  flex-row w-full rounded-2xl bg-gray-200 lg:flex-row justify-between items-center gap-8">
         <div className="w-full lg:w-1/2 flex gap-4 justify-between m-5">
           <div className="w-1/3 bg-gray-100 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-2xl hover:scale-105">
             <img
-              src="https://via.placeholder.com/150"
+              src={pic1}
               alt="Image 1"
               className="w-full h-full object-cover rounded-t-lg"
             />
           </div>
           <div className="w-1/3 bg-gray-100 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-2xl hover:scale-105">
             <img
-              src="https://via.placeholder.com/150"
+              src={pic2}
               alt="Image 2"
               className="w-full h-full object-cover rounded-t-lg"
             />
           </div>
           <div className="w-1/3 bg-gray-100 rounded-lg shadow-md transform transition-all duration-300 hover:shadow-2xl hover:scale-105">
             <img
-              src="https://via.placeholder.com/150"
+        src={pic3}
               alt="Image 3"
               className="w-full h-full object-cover rounded-t-lg"
             />

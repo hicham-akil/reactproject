@@ -9,9 +9,11 @@ function Header() {
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
-  
+
     try {
-      const response = await fetch(`http://localhost/backend/cherche.php?q=${encodeURIComponent(searchTerm)}`);
+      const response = await fetch(
+        `http://localhost/backend/cherche.php?q=${encodeURIComponent(searchTerm)}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -65,34 +67,42 @@ function Header() {
         </div>
       </div>
 
-      {/* Search Results Section */}
-      {searchResults.length > 0 && (
-        <div className="results mt-6">
-          <h2 className="text-xl font-bold mb-4">Résultats :</h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchResults.map((item) => (
-              <li key={item.id} className="mb-4 flex items-center p-4 border rounded-lg shadow-md hover:shadow-lg transition duration-200">
-                {/* Product Image */}
-                <img
-                  src={item.src}
-                  alt={item.p}
-                  className="w-16 h-16 object-cover rounded-lg shadow-md mr-4"
-                />
-                <div>
-                  {/* Product Name as Link */}
-                  <a
-                    href={`http://localhost:5174/item/${item.id}/price/${item.price}/image/${encodeURIComponent(item.src)}`}
-                    className="font-bold text-blue-500 hover:underline text-sm sm:text-base"
-                  >
-                    {item.p}
-                  </a>
-                  <p className="text-gray-700 text-xs sm:text-sm">Price: ${item.price}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  {searchResults.map((item) => (
+    <li
+      key={item.id}
+      className="mb-4 flex items-center p-4 border rounded-lg shadow-md hover:shadow-lg transition duration-200"
+    >
+    
+      <img
+        src={item.src}
+        alt={item.p}
+        className="w-16 h-16 object-cover rounded-lg shadow-md mr-4"
+      />
+      <div>
+        <a
+          href={`/item/${item.id}/price/${item.price}/image/${encodeURIComponent(
+            item.src
+          )}`}
+          className="font-bold text-blue-500 hover:underline text-sm sm:text-base"
+        >
+          {item.p}
+        </a>
+        <p className="text-gray-700 text-xs sm:text-sm">Price: ${item.price}</p>
+      </div>
+
+      <a
+        href={`/item/${item.id}/price/${item.price}/image/${encodeURIComponent(
+          item.src
+        )}`}
+        className="ml-auto text-pink-500 hover:text-pink-600 text-lg"
+        title="Like this item"
+      >
+        <i className="fas fa-heart"></i>
+      </a>
+    </li>
+  ))}
+</ul>
 
       {/* Images Section */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
