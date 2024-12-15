@@ -9,16 +9,24 @@ import Avis from './comp/clientavis';
 import Data from './comp/compelementdata';
 import Achter from './comp/achtercomp';
 import PaymentPage from './comp/paycomp';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/page1';
 import About from './pages/page2';
 import './index.css';  
 import { Aboutcomp } from './comp/aboutcomp';
+import DashboardStats from "./comp/DashboardStats";
+
+// Protected Route for Admins
+function AdminRoute({ children }) {
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  return isAdmin ? children : <Navigate to="/" />;
+}
 
 function App() {
   return (
     <div className="maindiv">
       <Routes>
+
         <Route
           path="/"
           element={
@@ -26,7 +34,7 @@ function App() {
               <Nav />
               <Header />
               <Data />
-              <Aboutcomp/>
+              <Aboutcomp />
               <Sem />
               <Avis />
               <Footer />
@@ -34,6 +42,7 @@ function App() {
           }
         />
         
+     
         <Route
           path="/about"
           element={
@@ -49,17 +58,20 @@ function App() {
           }
         />
         
+
         <Route
           path="/admin-dashboard"
           element={
-            <>
-              <Nav />
-              <Header />
-              <Footer />
-            </>
+            <AdminRoute>
+              <>
+                <Nav />              
+                <DashboardStats />
+              </>
+            </AdminRoute>
           }
         />
         
+     
         <Route
           path="/item/:Id/price/:price/image/:image"
           element={
@@ -70,6 +82,7 @@ function App() {
             </>
           }
         />
+        
         
         <Route
           path="/payment"
@@ -82,26 +95,16 @@ function App() {
           }
         />
         
-
+        {/* Login Route */}
         <Route
           path="/login"
-          element={
-            <>
-              <SignInForm />
-            </>
-          }
-        />
-
-
-        <Route
-          path="/enregis"
-          element={
-            <>
-              <SignUpForm />
-            </>
-          }
+          element={<SignInForm />}
         />
         
+        <Route
+          path="/enregis"
+          element={<SignUpForm />}
+        />
       </Routes>
     </div>
   );

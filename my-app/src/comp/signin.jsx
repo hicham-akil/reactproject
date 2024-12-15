@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
@@ -7,7 +7,7 @@ export default function SignInForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ export default function SignInForm() {
     }
 
     setLoading(true);
-    setError(""); 
+    setError("");
 
     try {
       const response = await fetch("http://localhost/backend/signin.php", {
@@ -33,15 +33,18 @@ export default function SignInForm() {
 
       if (response.ok) {
         if (data.user_id) {
-          // Store user details in localStorage
           localStorage.setItem("user_id", data.user_id);
           localStorage.setItem("firstName", data.firstName);
           localStorage.setItem("lastName", data.lastName);
-          setError(""); 
-          alert("Login successful!"); 
-          
-          // Use navigate for redirect after successful login
-          navigate("/"); // Redirect to the home page using react-router
+          localStorage.setItem("isAdmin", data.isAdmin);
+
+          alert("Login successful!");
+
+          if (data.isAdmin) {
+            navigate("/admin-dashboard");
+          } else {
+            navigate("/");
+          }
         } else {
           setError("Invalid response from server. Please try again.");
         }
@@ -65,7 +68,9 @@ export default function SignInForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-2">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-2">
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -78,7 +83,9 @@ export default function SignInForm() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-2">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-2">
+              Password
+            </label>
             <input
               type="password"
               id="password"

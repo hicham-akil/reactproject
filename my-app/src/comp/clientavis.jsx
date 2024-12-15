@@ -80,7 +80,7 @@ export default function Avis() {
           allReviews.map((review) => (
             <div
               key={review.id}
-              className="p-4 bg-pink-50 rounded-lg transition hover:shadow-lg"
+              className="p-4 bg-gray-200 rounded-lg transition hover:shadow-lg"
             >
               <div className="text-xl">{'★'.repeat(review.rating)}</div>
               <p className="mt-2">{review.comment}</p>
