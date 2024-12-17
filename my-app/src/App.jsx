@@ -15,6 +15,7 @@ import About from './pages/page2';
 import './index.css';  
 import { Aboutcomp } from './comp/aboutcomp';
 import DashboardStats from "./comp/DashboardStats";
+import Panier from './comp/panier';
 
 // Protected Route for Admins
 function AdminRoute({ children }) {
@@ -31,8 +32,8 @@ function App() {
           path="/"
           element={
             <>
-              <Nav />
-              <Header />
+           <Nav />
+           <Header />
               <Data />
               <Aboutcomp />
               <Sem />
@@ -42,7 +43,13 @@ function App() {
           }
         />
         
-     
+        <Route path="/panier" element={
+          <>
+             <Nav />
+             <Panier></Panier>
+          </>
+          } />
+
         <Route
           path="/about"
           element={

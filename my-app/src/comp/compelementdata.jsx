@@ -18,10 +18,10 @@ export default function Data() {
   };
 
   return (
-    <div className="flex flex-col mt-auto pt-6" >
-       <div class="bigdud">
-      <div class="bul1"></div>
-      <div class="article">
+    <div className="flex flex-col mt-auto pt-6 " >
+       <div class="bigdud ">
+      <div class="bul1 "></div>
+      <div class="article  rounded-2xl">
         <p>ARTICLE</p>
       </div>
       <div class="bul2"></div>

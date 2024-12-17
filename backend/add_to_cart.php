@@ -7,12 +7,10 @@ if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed
     header("Access-Control-Allow-Origin: null");
 }
 
-// CORS headers
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Handle preflight (OPTIONS) requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -48,14 +46,44 @@ $itemPrice = $conn->real_escape_string($data['price']);
 $createdAt = date('Y-m-d H:i:s');
 $updatedAt = date('Y-m-d H:i:s');
 
-$sql = "INSERT INTO cart (user_id, item_id, quantity, price, created_at, updated_at) 
-        VALUES ('$userId', '$itemId', '$quantity', '$itemPrice', '$createdAt', '$updatedAt')";
+// Check available quantity in items table
+$checkQuantitySql = "SELECT quantity FROM items WHERE id = '$itemId'";
+$result = $conn->query($checkQuantitySql);
 
-if ($conn->query($sql) === TRUE) {
-    echo json_encode(["message" => "Item added to cart successfully"]);
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $availableQuantity = $row['quantity'];
+
+    if ($quantity > $availableQuantity) {
+        // Quantity requested is greater than available
+        http_response_code(400);
+        echo json_encode(["error" => "Requested quantity exceeds available stock."]);
+        exit;
+    }
+    
+    // Deduct the quantity from items table
+    $newQuantity = $availableQuantity - $quantity;
+    $updateItemsSql = "UPDATE items SET quantity = '$newQuantity' WHERE id = '$itemId'";
+
+    if ($conn->query($updateItemsSql) === TRUE) {
+        // Insert into cart
+        $sql = "INSERT INTO cart (user_id, item_id, quantity, price, created_at, updated_at) 
+                VALUES ('$userId', '$itemId', '$quantity', '$itemPrice', '$createdAt', '$updatedAt')";
+        
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["message" => "Item added to cart successfully"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Database error: " . $conn->error]);
+        }
+    } else {
+        http_response_code(500);
+        echo json_encode(["error" => "Failed to update item quantity: " . $conn->error]);
+    }
 } else {
-    http_response_code(500);
-    echo json_encode(["error" => "Database error: " . $conn->error]);
+    // Item does not exist in items table
+    http_response_code(404);
+    echo json_encode(["error" => "Item not found."]);
 }
 
 $conn->close();
